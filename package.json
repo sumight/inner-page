@@ -1,8 +1,8 @@
 {
-  "name": "@plug/innerPage",
-  "version": "1.0.0",
+  "name": "@plug/inner-page",
+  "version": "0.0.4",
   "description": "",
-  "main": "innerPage.js",
+  "main": "inner-page.js",
   "scripts": {
     "demo": "gulp"
   },
@@ -10,8 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "@plug/widget": "^1.1.3",
-    "browser-sync": "^2.11.1",
-    "browserify": "^13.0.0",
     "director": "^1.2.8",
     "extend": "^3.0.0",
     "util": "^0.10.3"

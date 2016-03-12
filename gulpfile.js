@@ -26,6 +26,10 @@ gulp.task("jspack", function() {
                     debug: false
                 })
                 .bundle(function(err, res) {
+                    if(err){
+                        console.log(err);
+                        return;
+                    }
                     file.contents = res;
                     next(null, file);
                 });
@@ -37,7 +41,7 @@ gulp.task("jspack", function() {
 })
 
 gulp.task("supportTradition", function() {
-    return gulp.src('./innerPage.js')
+    return gulp.src('./inner-page.js')
         .pipe(through2.obj(function(file, enc, next) {
             browserify(file.path, {
                     debug: false
@@ -75,7 +79,7 @@ gulp.task("lesspack", function(){
 // 监听文件
 gulp.task('watch', function() {
     gulp.watch(['./demo/src/*.js', './*.js'], ["jspack", "supportTradition"]);
-    gulp.watch(['./demo/src/*.less', './*.less'], ["lesspack"]);
+    gulp.watch(['./demo/src/**/*.less', './**/*.less'], ["lesspack"]);
 })
 
 

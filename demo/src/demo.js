@@ -1,6 +1,8 @@
-require('../../innerPage');
+require('../../inner-page');
 
-$('.page').innerPage({});
+$('.page').innerPage({
+    animate:'bounce-right'
+});
 
 
 /**
