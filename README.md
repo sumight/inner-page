@@ -14,6 +14,8 @@
 ~ npm run demo
 ```
 
+### 例子1
+
 HTML
 
 ```html
@@ -30,13 +32,38 @@ $('.page').innerPage({});
 
 详见 demo
 
+### 例子2
+
+HTML
+
+```html
+<div class="page"></div>
+```
+
+Javascript
+
+```javascript
+$('.page').innerPage({
+    title:'page title',
+    route:'/somepage'
+});
+```
+
+详见 demo
+
 ## 配置
 
 |选项     |默认值    |描述     |
 |:--------|:-------- |:--------|
 |route  |必填       |指定页面的路由|
 |title  |必填       |指定页面的标题|
+|animate|'base'       |页面切换的动画效果|
 
+### animate
+|动画名|描述|
+|:---|:---|
+|'base'|直接显示或者隐藏|
+|'bounce-right'|从右侧滑入|
 
 ## 方法
 
