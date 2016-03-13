@@ -1,6 +1,6 @@
 {
   "name": "@plug/inner-page",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "inner-page.js",
   "scripts": {
