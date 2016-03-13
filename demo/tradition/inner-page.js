@@ -69,7 +69,7 @@ InnerPage.prototype.init = function(options) {
 InnerPage.prototype.verifyOptions = function() {
     var self = this;
 
-    if($(self.container).length === 0){
+    if ($(self.container).length === 0) {
         return false;
     }
 
@@ -98,7 +98,7 @@ InnerPage.prototype.initPage = function() {
     // 隐藏当前页面，并且加上标记
     $(self.container)
         .addClass('inner-page')
-        .addClass('inner-page-'+self.animate);
+        .addClass('inner-page-' + self.animate);
     // 添加路由
     var routes = {};
     routes[self.route] = function() {
@@ -131,13 +131,16 @@ InnerPage.prototype.initPage = function() {
  */
 InnerPage.prototype.switchPage = function() {
     var self = this;
-
     // 获取当前页面实例
     var currentPageData = InnerPage.pageStack.pop();
 
-    if(!currentPageData){
+    if (!currentPageData) {
         // 如果没有当前页，说明这是第一页，直接显示
         $(self.container).addClass('inner-page-show');
+        // 加上层级
+        $(self.container).css({
+            zIndex: 1
+        });
         InnerPage.pageStack.push(self);
         return;
     }
@@ -149,66 +152,51 @@ InnerPage.prototype.switchPage = function() {
 
     // 判断是前进还是后退
     // 获取前一个页面
-    var prePageData = InnerPage.pageStack[InnerPage.pageStack.length-1];
-    if(!prePageData){
+    var prePageData = InnerPage.pageStack[InnerPage.pageStack.length - 1];
+    if (!prePageData) {
         InnerPage.pageStackDirect = 'forward';
-    }else{
-        if(prePageData === self){
+    } else {
+        if (prePageData === self) {
             // 如果前一个页面就是本页面
             InnerPage.pageStackDirect = 'back';
-        }else{
-            InnerPage.pageStackDirect = 'forward';    
+        } else {
+            InnerPage.pageStackDirect = 'forward';
         }
     }
-
     // 根据路由的层级确定切换效果
+    // 获取低层的 z-index 属性
+    var currentPageZIndex = $currentPage.css('zIndex');
+    if (currentPageZIndex === 'auto') {
+        currentPageZIndex = 0;
+    }
     if (InnerPage.pageStackDirect === 'forward') {
-    // if (self.getPathLevel(InnerPage.currentPageData.route) <= self.getPathLevel(self.route)) {
         // 如果从低层切换到高层
-        // 获取低层的 z-index 属性
-        var currentPageZIndex = $currentPage.css('zIndex');
-        if (currentPageZIndex === 'auto') {
-            currentPageZIndex = 0;
-        }
+
         // 将当前的 z-index 层次设置高于底层
         $selfPage.css({
-            zIndex: (currentPageZIndex + 1)
+            zIndex: (parseInt(currentPageZIndex) + 1)
         })
         $selfPage.addClass('inner-page-show');
         // 推到栈里面
-        InnerPage.pageStack.push(currentPageData);    
+        InnerPage.pageStack.push(currentPageData);
         InnerPage.pageStack.push(self);
     } else {
-        // 将当前页面的动画效果切入场景
-        // $selfPage.addClass('inner-page-show');
-        // todo路由，该死
+
         // 如果从高层切换到底层
         // 将当前的 页面切出场景
         $currentPage.removeClass('inner-page-show');
-    }
-    // window.onpopstate = function(e){
-    //     // 判断是否是回退
-    //     alert();
-    //     InnerPage.pageStackDirect = 'back';
-    // };
-};
 
-/**
- * 获取路径的层级
- * @param  {String} path  路径
- * @return {Number}       层级的数量
- */
-InnerPage.prototype.getPathLevel = function(path){
-    if(typeof path !== 'string'){
-        throw new Error('参数错误, path 参数必须为字符串');
-        return ;
+
+
     }
-    return path.split('/').filter(function(ele, index){
-        if(ele === ''){
-            return false;
+    $currentPage.on('transitionend', function() {
+        if (!$(this).hasClass('inner-page-show')) {
+            //  减少层级当前页面的层级
+            $currentPage.css({
+                zIndex: 0
+            })
         }
-        return true;
-    }).length;
+    });
 };
 
 /**
@@ -231,7 +219,7 @@ InnerPage.prototype.setTitle = function(title) {
  */
 InnerPage.prototype.forward = function() {
     var self = this;
-    location.hash = '#'+self.route;
+    location.hash = '#' + self.route;
 };
 
 /**

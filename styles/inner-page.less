@@ -32,3 +32,14 @@ body{
 .inner-page-bounce-right.inner-page-show{
     left:0;
 }
+
+// 渐现效果
+.inner-page-fade-in{
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    -webkit-transition: opacity 0.4s ease;
+}
+
+.inner-page-fade-in.inner-page-show{
+    opacity:1;
+}
