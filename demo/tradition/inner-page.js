@@ -29,7 +29,6 @@ InnerPage.pageStack = [];
 
 util.inherits(InnerPage, Widget);
 
-
 InnerPage.prototype.defaultOptions = {
     // 容器元素
     container: '',
@@ -63,6 +62,11 @@ InnerPage.prototype.init = function(options) {
      * 初始化页面
      */
     self.initPage();
+
+    /**
+     * 初始化事件
+     */
+    self.initEvent();
 };
 
 
@@ -108,14 +112,18 @@ InnerPage.prototype.initPage = function() {
             route: self.route
         }
 
-        $(self.container).trigger('innerpage.open', data);
+        // $(self.container).trigger('innerpage.open', data);
 
-        // 页面切换效果
-        // // 其他内部页面
-        // $('.inner-page').hide();
-        // // 显示当前内部也
-        // self.container.show();
-        self.switchPage();
+        // 本页面
+        var $selfPage = $(self.container);
+        // 显示本页
+        $selfPage.show();
+        // 神奇的100毫秒，如果不加会出现 过渡失效的 bug
+        setTimeout(function() {
+            // 页面切换效果
+            self.switchPage();
+        },100);
+        // self.switchPage();
 
         // 设置 title
         self.setTitle(self.title);
@@ -131,6 +139,11 @@ InnerPage.prototype.initPage = function() {
  */
 InnerPage.prototype.switchPage = function() {
     var self = this;
+
+    // 本页面
+    var $selfPage = $(self.container);
+
+
     // 获取当前页面实例
     var currentPageData = InnerPage.pageStack.pop();
 
@@ -145,10 +158,14 @@ InnerPage.prototype.switchPage = function() {
         return;
     }
 
+
+
     // 当前页面
     var $currentPage = $(currentPageData.container);
-    // 本页面
-    var $selfPage = $(self.container);
+    // 显示当前页
+    $currentPage.show();
+
+
 
     // 判断是前进还是后退
     // 获取前一个页面
@@ -172,32 +189,70 @@ InnerPage.prototype.switchPage = function() {
     if (InnerPage.pageStackDirect === 'forward') {
         // 如果从低层切换到高层
 
+        //  触发 forward 事件
+        self.$container.trigger('forward');
+
+
         // 将当前的 z-index 层次设置高于底层
         $selfPage.css({
             zIndex: (parseInt(currentPageZIndex) + 1)
-        })
+        });
         $selfPage.addClass('inner-page-show');
         // 推到栈里面
         InnerPage.pageStack.push(currentPageData);
         InnerPage.pageStack.push(self);
     } else {
-
         // 如果从高层切换到底层
+
+        // 触发 当前页面的 back 事件
+        currentPageData.$container.trigger('back');
+
         // 将当前的 页面切出场景
         $currentPage.removeClass('inner-page-show');
 
-
-
     }
+    // 重置当前页面的层级
     $currentPage.on('transitionend', function() {
+
+        // 隐藏当前页
+        $(this).hide();
+
         if (!$(this).hasClass('inner-page-show')) {
+            // 从高层切换到低层
+
             //  减少层级当前页面的层级
             $currentPage.css({
                 zIndex: 0
-            })
+            });
+
+        }
+        // 这个事件绑定只会执行一次
+        $(this).unbind('transitionend');
+    });
+
+};
+
+/**
+ * 绑定事件
+ */
+InnerPage.prototype.initEvent = function() {
+    var self = this;
+    // 监听本页面的过渡结束事件
+    $(self.container).on('transitionend', function() {
+
+        if ($(this).hasClass('inner-page-show')) {
+            // 切换入本页
+            // 切换入本页面结束,触发 forwarded 事件
+            self.$container.trigger('forwarded');
+
+        } else {
+            // 切换出本页
+            // 切换出本页面结束,触发 backed 事件
+            self.$container.trigger('backed');
+
         }
     });
-};
+}
 
 /**
  * 设置当前的页面 title 
