@@ -9,11 +9,11 @@ body {
   overflow: hidden;
 }
 .viewport {
-  position: relative;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  -webkit-overflow-scrolling: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 .inner-page {
   width: 100%;
@@ -28,9 +28,13 @@ body {
 }
 .inner-page-base {
   display: none;
+  opacity: 0;
+  -webkit-transition: opacity 0.001s ease;
+  transition: opacity 0.001s ease;
 }
 .inner-page-base.inner-page-show {
-  display: block!important;
+  opacity: 1;
+  display: block;
 }
 .inner-page-bounce-right {
   left: 100%;

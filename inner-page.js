@@ -7,6 +7,15 @@
  * @author xjc
  */
 
+/**
+ * todo 加上 display:none 之后会出现闪烁的问题
+ *      100s 的延迟无法接受
+ *      结构统一规划
+ * better
+ *      隐藏路由
+ *      增加页面结构嵌套的功能
+ */
+
 /* 引入依赖 */
 var util = require('util');
 var Widget = require('@plug/widget');
@@ -25,6 +34,10 @@ InnerPage.pageStackDirect = 'forward';
  * 页面栈
  */
 InnerPage.pageStack = [];
+/**
+ * 即将被替换的页面
+ */
+InnerPage.$currentPage = null;
 
 util.inherits(InnerPage, Widget);
 
@@ -66,6 +79,8 @@ InnerPage.prototype.init = function(options) {
      * 初始化事件
      */
     self.initEvent();
+
+
 };
 
 
@@ -93,10 +108,7 @@ InnerPage.prototype.verifyOptions = function() {
 InnerPage.prototype.initPage = function() {
     var self = this;
 
-    /**
-     * 首先跳转到主页面
-     */
-    location.hash = '#/';
+
 
     // 隐藏当前页面，并且加上标记
     $(self.container)
@@ -111,18 +123,19 @@ InnerPage.prototype.initPage = function() {
             route: self.route
         }
 
-        // $(self.container).trigger('innerpage.open', data);
-
         // 本页面
         var $selfPage = $(self.container);
         // 显示本页
+
+        /**
+         * 为了解决在 show() 之后马上进行transition效果失效的问题
+         */
         $selfPage.show();
-        // 神奇的100毫秒，如果不加会出现 过渡失效的 bug
-        setTimeout(function() {
-            // 页面切换效果
-            self.switchPage();
-        },100);
-        // self.switchPage();
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                self.switchPage();
+            });
+        });
 
         // 设置 title
         self.setTitle(self.title);
@@ -130,6 +143,17 @@ InnerPage.prototype.initPage = function() {
 
     var router = Router(routes);
     router.init();
+
+    /**
+     * 首先跳转到主页面
+     */
+    if (location.hash !== '#/') {
+        location.hash = '#/';
+    }
+    // 默认的所有页面都是隐藏的
+    if (self.route !== '/') {
+        self.$container.hide();
+    }
 };
 
 /**
@@ -138,10 +162,8 @@ InnerPage.prototype.initPage = function() {
  */
 InnerPage.prototype.switchPage = function() {
     var self = this;
-
     // 本页面
     var $selfPage = $(self.container);
-
 
     // 获取当前页面实例
     var currentPageData = InnerPage.pageStack.pop();
@@ -154,16 +176,17 @@ InnerPage.prototype.switchPage = function() {
             zIndex: 1
         });
         InnerPage.pageStack.push(self);
+        $(self.container).trigger('forward');
         return;
     }
 
 
 
     // 当前页面
-    var $currentPage = $(currentPageData.container);
-    // 显示当前页
-    $currentPage.show();
+    var $currentPage = InnerPage.$currentPage = $(currentPageData.container);
 
+    // 显示当前页
+    $selfPage.show();
 
 
     // 判断是前进还是后退
@@ -191,7 +214,6 @@ InnerPage.prototype.switchPage = function() {
         //  触发 forward 事件
         self.$container.trigger('forward');
 
-
         // 将当前的 z-index 层次设置高于底层
         $selfPage.css({
             zIndex: (parseInt(currentPageZIndex) + 1)
@@ -202,33 +224,12 @@ InnerPage.prototype.switchPage = function() {
         InnerPage.pageStack.push(self);
     } else {
         // 如果从高层切换到底层
-
-        // 触发 当前页面的 back 事件
-        currentPageData.$container.trigger('back');
-
+        // 触发 back 事件
+        self.$container.trigger('back');
         // 将当前的 页面切出场景
         $currentPage.removeClass('inner-page-show');
 
     }
-    // 重置当前页面的层级
-    $currentPage.on('transitionend', function() {
-
-        // 隐藏当前页
-        $(this).hide();
-
-        if (!$(this).hasClass('inner-page-show')) {
-            // 从高层切换到低层
-
-            //  减少层级当前页面的层级
-            $currentPage.css({
-                zIndex: 0
-            });
-
-        }
-        // 这个事件绑定只会执行一次
-        $(this).unbind('transitionend');
-    });
-
 };
 
 /**
@@ -236,9 +237,11 @@ InnerPage.prototype.switchPage = function() {
  */
 InnerPage.prototype.initEvent = function() {
     var self = this;
+    
+    // 兼容 transitionend 事件
+    var transitionendEventName = 'transitionend';
     // 监听本页面的过渡结束事件
-    $(self.container).on('transitionend', function() {
-
+    $(self.container).on('webkitTransitionEnd', function() {
         if ($(this).hasClass('inner-page-show')) {
             // 切换入本页
             // 切换入本页面结束,触发 forwarded 事件
@@ -249,8 +252,52 @@ InnerPage.prototype.initEvent = function() {
             // 切换出本页面结束,触发 backed 事件
             self.$container.trigger('backed');
 
+            // //  减少层级当前页面的层级
+            // $(this).css({
+            //     zIndex: 0
+            // });
+            // // 隐藏当前页
+            // $(this).hide();
         }
+        /**
+         * todo 修复 前进后退的状态
+         * 添加隐藏和显示的
+         */
+
+        // 重置即将被替换的页面的状态
+        // if (!!self.$currentPage) {
+        //     self.$currentPage.hide();
+        //     if (!self.$currentPage.hasClass('inner-page-show')) {
+        //         // 从高层切换到低层
+
+        //         //  减少层级当前页面的层级
+        //         self.$currentPage.css({
+        //             zIndex: 0
+        //         });
+        //     }
+        // }
+
+        self.on('forwarded', function() {
+            self.hidePage(InnerPage.$currentPage);
+        });
+        self.on('backed', function() {
+            self.hidePage(self.$container);
+        });
     });
+}
+
+InnerPage.prototype.hidePage = function($page) {
+    if (!!$page) {
+        $page.hide();
+        if (!$page.hasClass('inner-page-show')) {
+            // 从高层切换到低层
+
+            //  减少层级当前页面的层级
+            $page.css({
+                zIndex: 0
+            });
+        }
+    }
 }
 
 /**
