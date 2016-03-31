@@ -3,8 +3,8 @@ require('../../inner-page');
 $('.page').innerPage({
     // animate:'bounce-right'
     animate: 'fade-in'
+    // animate: 'base'
 });
-
 
 /**
  * 调用控件中的方法

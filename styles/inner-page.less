@@ -30,37 +30,36 @@ body {
 }
 
 // 基本的显示隐藏效果
-.inner-page-base{
+body .inner-page.inner-page-base{
     display: none;
     opacity: 0;
     -webkit-transition: opacity 0.001s ease;
     transition: opacity 0.001s ease;
     
 }
-
-.inner-page-base.inner-page-show{
+body .inner-page.inner-page-base.inner-page-show{
     opacity: 1;
     display: block;
 }
 
 // 左侧切入效果
-.inner-page-bounce-right{
-    left: 100%!important;
+body .inner-page.inner-page-bounce-right{
+    left: 100%;
     transition: left 0.4s ease;
     -webkit-transition: left 0.4s ease;
 }
 
-.inner-page-bounce-right.inner-page-show{
+body .inner-page.inner-page-bounce-right.inner-page-show{
     left:0;
 }
 
 // 渐现效果
-.inner-page-fade-in{
+body .inner-page.inner-page-fade-in{
     opacity: 0;
     transition: opacity 0.4s ease;
     -webkit-transition: opacity 0.4s ease;
 }
 
-.inner-page-fade-in.inner-page-show{
+body .inner-page.inner-page-fade-in.inner-page-show{
     opacity:1;
 }

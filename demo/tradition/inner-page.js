@@ -25,6 +25,8 @@ var Router = require('director').Router;
 
 function InnerPage() {}
 
+window.innerPage = InnerPage;
+
 /**
  * 页面栈的方向
  *     'forward' / 'back'
@@ -129,7 +131,7 @@ InnerPage.prototype.initPage = function() {
         // 显示本页
 
         /**
-         * 为了解决在 show() 之后马上进行transition效果失效的问题
+         * 为了解决在 show 之后马上进行transition效果失效的问题
          */
         $selfPage.show();
         requestAnimationFrame(function() {
@@ -238,7 +240,7 @@ InnerPage.prototype.switchPage = function() {
  */
 InnerPage.prototype.initEvent = function() {
     var self = this;
-    
+
     // 兼容 transitionend 事件
     var transitionendEventName = 'transitionend';
     // 监听本页面的过渡结束事件
@@ -252,38 +254,16 @@ InnerPage.prototype.initEvent = function() {
             // 切换出本页
             // 切换出本页面结束,触发 backed 事件
             self.$container.trigger('backed');
-
-            // //  减少层级当前页面的层级
-            // $(this).css({
-            //     zIndex: 0
-            // });
-            // // 隐藏当前页
-            // $(this).hide();
         }
-        /**
-         * todo 修复 前进后退的状态
-         * 添加隐藏和显示的
-         */
 
-        // 重置即将被替换的页面的状态
-        // if (!!self.$currentPage) {
-        //     self.$currentPage.hide();
-        //     if (!self.$currentPage.hasClass('inner-page-show')) {
-        //         // 从高层切换到低层
-
-        //         //  减少层级当前页面的层级
-        //         self.$currentPage.css({
-        //             zIndex: 0
-        //         });
-        //     }
-        // }
-
-        self.on('forwarded', function() {
-            self.hidePage(InnerPage.$currentPage);
-        });
-        self.on('backed', function() {
-            self.hidePage(self.$container);
-        });
+    });
+    self.on('forwarded', function() {
+        self.hidePage(InnerPage.$currentPage);
+        self.enableOnePage();
+    });
+    self.on('backed', function() {
+        self.hidePage(self.$container);
+        self.enableOnePage();
     });
 }
 
@@ -299,6 +279,20 @@ InnerPage.prototype.hidePage = function($page) {
             });
         }
     }
+}
+
+/**
+ * 让当前的页面处于激活状态，其余页面处于非激活状态
+ * @param  {Object} $page 目标页面
+ */
+InnerPage.prototype.enableOnePage = function() {
+    var nowPage = InnerPage.pageStack[InnerPage.pageStack.length - 1];
+    $('.inner-page').css({
+        pointerEvents: 'none'
+    });
+    nowPage.$container.css({
+        pointerEvents: 'auto'
+    });
 }
 
 /**
@@ -336,6 +330,7 @@ Widget.registerJQeuryPlug('innerPage', InnerPage);
 
 // 对传统模块化方法的支持
 if(!!window.innerPage){throw new Error('全局变量冲突，innerPage')}else{window.innerPage = module.exports}
+
 },{"@plug/widget":3,"director":5,"util":9}],2:[function(require,module,exports){
 /**
  * [description]
