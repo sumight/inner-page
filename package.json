@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@plug/widget": "^1.1.3",
+    "@plug/widget": "^1.3.3",
     "director": "^1.2.8",
     "extend": "^3.0.0",
     "util": "^0.10.3"

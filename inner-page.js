@@ -227,7 +227,7 @@ InnerPage.prototype.switchPage = function() {
     } else {
         // 如果从高层切换到底层
         // 触发 back 事件
-        self.$container.trigger('back');
+        $currentPage.trigger('back');
         // 将当前的 页面切出场景
         $currentPage.removeClass('inner-page-show');
 

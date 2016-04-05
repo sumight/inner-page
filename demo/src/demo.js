@@ -1,5 +1,5 @@
 require('../../inner-page');
-
+var Widget = require('@plug/widget');
 $('.page').innerPage({
     // animate:'bounce-right'
     animate: 'fade-in'
@@ -23,36 +23,55 @@ $('.page').innerPage({
 // })
 
 
-$('.js-1').innerPage().on('forward', function() {
+$('.js-1').on('forward', function() {
     console.log('js-1 forward');
 })
 
-$('.js-1').innerPage().on('forwarded', function() {
+$('.js-1').on('forwarded', function() {
     console.log('js-1 forwarded');
 })
 
-$('.js-1').innerPage().on('back', function() {
+$('.js-1').on('back', function() {
     console.log('js-1 back');
 })
 
-$('.js-1').innerPage().on('backed', function() {
+$('.js-1').on('backed', function() {
     console.log('js-1 backed');
 
 })
 
+$('.js-2').on('forward', function() {
+    console.log('js-2 forward');
+})
+
+$('.js-2').on('forwarded', function() {
+    console.log('js-2 forwarded');
+})
+
+$('.js-2').on('back', function() {
+    console.log('js-2 back');
+})
+
+$('.js-2').on('backed', function() {
+    console.log('js-2 backed');
+
+})
+
 // js main
-$('.js-main').innerPage().on('forward', function() {
+$('.js-main').on('forward', function() {
     console.log('js-main forward');
 })
 
-$('.js-main').innerPage().on('forwarded', function() {
+$('.js-main').on('forwarded', function() {
     console.log('js-main forwarded');
 })
 
-$('.js-main').innerPage().on('back', function() {
+$('.js-main').on('back', function() {
     console.log('js-main back');
 })
 
-$('.js-main').innerPage().on('backed', function() {
+$('.js-main').on('backed', function() {
     console.log('js-main backed')
 })
+
+Widget.initJQueryPlug();
