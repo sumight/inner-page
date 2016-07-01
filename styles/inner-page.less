@@ -43,14 +43,29 @@ body .inner-page.inner-page-base.inner-page-show{
 }
 
 // 左侧切入效果
+// body .inner-page.inner-page-bounce-right{
+//     left: 100%;
+//     transition: left 0.4s ease;
+//     -webkit-transition: left 0.4s ease;
+// }
+
+// body .inner-page.inner-page-bounce-right.inner-page-show{
+//     left:0;
+// }
+
+// 解决闪屏问题
 body .inner-page.inner-page-bounce-right{
-    left: 100%;
-    transition: left 0.4s ease;
-    -webkit-transition: left 0.4s ease;
+    transform: translateX(100%);
+    -webkit-transform: translateX(100%);
+    transition: transform 0.4s ease;
+    -webkit-transition: transform 0.4s ease;
+    transition: -webkit-transform 0.4s ease;
+    -webkit-transition: -webkit-transform 0.4s ease;
 }
 
 body .inner-page.inner-page-bounce-right.inner-page-show{
-    left:0;
+    transform: translateX(0);
+    -webkit-transform: translateX(0);
 }
 
 // 渐现效果

@@ -1,7 +1,7 @@
 {
   "name": "@plug/inner-page",
-  "version": "0.1.14",
-  "description": "",
+  "version": "0.1.15",
+  "description": "这个控件为移动端提供页面内页面切换功能，适用于一些简单的内部页面场景，比如跳转到另一个页面去选择日历，比如跳转到一个搜索页面。这些场景放在内部页面中可以避免保存状态的麻烦，同时提升用户体验。",
   "main": "inner-page.js",
   "scripts": {
     "demo": "gulp"
@@ -26,5 +26,11 @@
     "gulp-uglify": "^1.4.2",
     "jshint-stylish": "^2.1.0",
     "through2": "^2.0.0"
-  }
+  },
+  "readme": "# 内部页面控件\n\n这个控件为移动端提供页面内页面切换功能，适用于一些简单的内部页面场景，比如跳转到另一个页面去选择日历，比如跳转到一个搜索页面。这些场景放在内部页面中可以避免保存状态的麻烦，同时提升用户体验。\n\n## 开始\n\n拉去代码后进入目录\n\n```\n# 安装控件\n~ npm i\n\n# 运行 demo\n~ npm run demo\n```\n\n### 例子1\n\nHTML\n\n```html\n<div class=\"page main\" route=\"/\" title=\"main\"></div>\n<div class=\"page page1\" route=\"/page1\" title=\"page one\"></div>\n<div class=\"page page2\" route=\"/page2\" title=\"page two\"></div>\n```\n\nJavascript\n\n```javascript\n$('.page').innerPage({});\n```\n\n详见 demo\n\n### 例子2\n\nHTML\n\n```html\n<div class=\"page\"></div>\n```\n\nJavascript\n\n```javascript\n$('.page').innerPage({\n    title:'page title',\n    route:'/somepage'\n});\n```\n\n详见 demo\n\n## 配置\n\n|选项     |默认值    |描述     |\n|:--------|:-------- |:--------|\n|route  |必填       |指定页面的路由|\n|title  |必填       |指定页面的标题|\n|animate|'base'       |页面切换的动画效果|\n\n### animate\n|动画名|描述|\n|:---|:---|\n|'base'|直接显示或者隐藏|\n|'bounce-right'|从右侧滑入|\n\n## 方法\n\n方法通过句柄来调用\n\n```javascript\n    var handle = $('.js-hook').innerPage();\n    var handle.someMethod();\n```\n\n### setTitle\n\n设置页面的标题\n\n#### 参数\n\n|参数名|描述|\n|---|:---|\n|title |将要被设置的 title 值|\n\n#### 返回值\n\n空\n\n#### 举例\n\n```javascript\n    var handle = $('.page js-target').innerPage();\n    handle.setTitle('changed title');\n```\n\n\n## 事件\n\n事件通过句柄来监听\n\n```javascript\n    var handle = $('.js-hook').innerPage();\n    var handle.on('someEvent', function(){});\n```\n\n### innerpage.open \n\n当当前页面被打开的时候触发\n\n#### 事件参数\n\n|参数名|描述|\n|:---|:---|\n|data|页面的信息，包括data.title 页面的标题，data.route 页面的路由|\n\n\n#### 例子\n\n```javascript\n    var handle = $('.js-hook').innerPage();\n    var handle.on('innerpage.open', function(event, data){\n        console.log(data);\n    });\n```\n",
+  "readmeFilename": "README.md",
+  "gitHead": "c1e89ed4b8748f385d763a79eac2782bba1d69bf",
+  "_id": "@plug/inner-page@0.1.14",
+  "_shasum": "2a1b4301919569d87f05c5517e97bca3005358c4",
+  "_from": "@plug/inner-page@0.1.14"
 }
